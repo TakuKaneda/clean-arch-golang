@@ -2,11 +2,10 @@ package database
 
 import (
 	"clean_arch_golang/domain"
-	"clean_arch_golang/infrastructure"
 )
 
 type UserRepository struct {
-	infrastructure.SqlHandler
+	SqlHandler
 }
 
 func (repo *UserRepository) Store(u domain.User) (id int, err error) {
