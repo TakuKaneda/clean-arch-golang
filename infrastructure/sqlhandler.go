@@ -17,14 +17,16 @@ type SqlResult struct {
 }
 
 type SqlRow struct {
-	Row sql.Row
+	Rows *sql.Rows
 }
 
 var _ database.SqlHandler = (*SqlHandler)(nil)
 var _ database.Result = (*SqlResult)(nil)
 var _ database.Row = (*SqlRow)(nil)
 
-func NewSqlHandler() *SqlHandler {
+// NewSqlHandler creates a new SqlHandler interface
+// defined in interface/database package.
+func NewSqlHandler() database.SqlHandler {
 	conn, err := sql.Open("mysql", "root:@tcp(db:3306/sample")
 	if err != nil {
 		panic(err.Error)
@@ -34,29 +36,41 @@ func NewSqlHandler() *SqlHandler {
 	return sqlHandler
 }
 
-func (hander *SqlHandler) Execute(statement string, args ...interface{}) (database.Result, error) {
-	return nil, nil
+func (handler *SqlHandler) Execute(statement string, args ...interface{}) (database.Result, error) {
+	res := SqlResult{}
+	result, err := handler.Conn.Exec(statement, args...)
+	if err != nil {
+		return res, err
+	}
+	res.Result = result
+	return res, nil
 }
 
-func (hander *SqlHandler) Query(statement string, args ...interface{}) (database.Row, error) {
-	return nil, nil
+func (handler *SqlHandler) Query(statement string, args ...interface{}) (database.Row, error) {
+	rows, err := handler.Conn.Query(statement, args...)
+	if err != nil {
+		return new(SqlRow), err
+	}
+	row := new(SqlRow)
+	row.Rows = rows
+	return row, nil
 }
 
-func (result *SqlResult) LastInsertId() (int64, error) {
-	return 0, nil
+func (r SqlResult) LastInsertId() (int64, error) {
+	return r.Result.LastInsertId()
 }
 
-func (result *SqlResult) RowsAffected() (int64, error) {
-	return 0, nil
+func (r SqlResult) RowsAffected() (int64, error) {
+	return r.Result.RowsAffected()
 }
 
-func (row *SqlRow) Scan(...interface{}) error {
-	return nil
+func (r SqlRow) Scan(dest ...interface{}) error {
+	return r.Rows.Scan(dest...)
 }
-func (row *SqlRow) Next() bool {
-	return false
+func (r SqlRow) Next() bool {
+	return r.Rows.Next()
 }
 
-func (row *SqlRow) Close() bool {
-	return false
+func (r SqlRow) Close() error {
+	return r.Rows.Close()
 }
