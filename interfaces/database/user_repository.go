@@ -24,7 +24,7 @@ func (repo *UserRepository) Store(u domain.User) (id int, err error) {
 }
 
 func (repo *UserRepository) FindById(identifier int) (user domain.User, err error) {
-	row, err := repo.Query("SELECT id, first_name, last_name FROM user WHERE id = ?", identifier)
+	row, err := repo.Query("SELECT id, first_name, last_name FROM users WHERE id = ?", identifier)
 	defer row.Close()
 	if err != nil {
 		return

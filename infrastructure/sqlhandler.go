@@ -27,7 +27,7 @@ var _ database.Row = (*SqlRow)(nil)
 // NewSqlHandler creates a new SqlHandler interface
 // defined in interface/database package.
 func NewSqlHandler() database.SqlHandler {
-	conn, err := sql.Open("mysql", "root:@tcp(db:3306/sample")
+	conn, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/sample")
 	if err != nil {
 		panic(err.Error)
 	}
