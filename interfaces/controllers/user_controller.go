@@ -14,7 +14,7 @@ type UserController struct {
 func NewUserController(sqlHandler database.SqlHandler) *UserController {
 	return &UserController{
 		Interactor: usecase.UserInteractor{
-			UserRepository: &database.UserRepository{
+			UserRepository: &database.UserRepositoryImpl{
 				SqlHandler: sqlHandler,
 			},
 		},

@@ -8,7 +8,7 @@ import (
 	"clean_arch_golang/interfaces/database"
 )
 
-type SqlHandler struct {
+type SqlHandlerImpl struct {
 	Conn *sql.DB
 }
 
@@ -20,7 +20,7 @@ type SqlRow struct {
 	Rows *sql.Rows
 }
 
-var _ database.SqlHandler = (*SqlHandler)(nil)
+var _ database.SqlHandler = (*SqlHandlerImpl)(nil)
 var _ database.Result = (*SqlResult)(nil)
 var _ database.Row = (*SqlRow)(nil)
 
@@ -31,12 +31,12 @@ func NewSqlHandler() database.SqlHandler {
 	if err != nil {
 		panic(err.Error)
 	}
-	sqlHandler := new(SqlHandler)
+	sqlHandler := new(SqlHandlerImpl)
 	sqlHandler.Conn = conn
 	return sqlHandler
 }
 
-func (handler *SqlHandler) Execute(statement string, args ...interface{}) (database.Result, error) {
+func (handler *SqlHandlerImpl) Execute(statement string, args ...interface{}) (database.Result, error) {
 	res := SqlResult{}
 	result, err := handler.Conn.Exec(statement, args...)
 	if err != nil {
@@ -46,7 +46,7 @@ func (handler *SqlHandler) Execute(statement string, args ...interface{}) (datab
 	return res, nil
 }
 
-func (handler *SqlHandler) Query(statement string, args ...interface{}) (database.Row, error) {
+func (handler *SqlHandlerImpl) Query(statement string, args ...interface{}) (database.Row, error) {
 	rows, err := handler.Conn.Query(statement, args...)
 	if err != nil {
 		return new(SqlRow), err

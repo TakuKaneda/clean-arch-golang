@@ -4,11 +4,11 @@ import (
 	"clean_arch_golang/domain"
 )
 
-type UserRepository struct {
+type UserRepositoryImpl struct {
 	SqlHandler
 }
 
-func (repo *UserRepository) Store(u domain.User) (id int, err error) {
+func (repo *UserRepositoryImpl) Store(u domain.User) (id int, err error) {
 	result, err := repo.Execute(
 		"INSERT INTO users (first_name, last_name) VALUES (?,?)", u.FirstName, u.LastName,
 	)
@@ -23,7 +23,7 @@ func (repo *UserRepository) Store(u domain.User) (id int, err error) {
 	return
 }
 
-func (repo *UserRepository) FindById(identifier int) (user domain.User, err error) {
+func (repo *UserRepositoryImpl) FindById(identifier int) (user domain.User, err error) {
 	row, err := repo.Query("SELECT id, first_name, last_name FROM users WHERE id = ?", identifier)
 	defer row.Close()
 	if err != nil {
@@ -41,7 +41,7 @@ func (repo *UserRepository) FindById(identifier int) (user domain.User, err erro
 	return
 }
 
-func (repo *UserRepository) FindAll() (users domain.Users, err error) {
+func (repo *UserRepositoryImpl) FindAll() (users domain.Users, err error) {
 	rows, err := repo.Query("SELECT id, first_name, last_name FROM users")
 	defer rows.Close()
 	if err != nil {
